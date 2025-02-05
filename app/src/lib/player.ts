@@ -769,7 +769,7 @@ export const getSrc = async (
 	| undefined
 > => {
 
-    const res = await APIClient.fetch(`/api/v1/player.json?videoId=${videoId}&playlistId=${playlistId}&playerParams=${params}`).then((response) => {
+    const res = await APIClient.fetch(`https://invidious.nikkosphere.com/api/v1/videos/${videoId}`).then((response) => {
        if (!response.ok) {
            return response.text().then(message => {
                throw new Error(message); // Throw a new error with the response text
