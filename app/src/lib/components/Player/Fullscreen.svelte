@@ -636,529 +636,435 @@
 </div>
 
 <style lang="scss">
-	.pad {
-		padding: 2vh 1em 1.5em;
-		// height: 100%;
+  // Variables and mixins
+  $sm-radius: 12px;
+  
+  @mixin mobile {
+    @media screen and (max-width: 719px) {
+      @content;
+    }
+  }
 
-		overflow-y: auto;
-		contain: style paint size layout;
-		width: 100%;
-	}
+  @mixin desktop {
+    @media screen and (min-width: 720px) {
+      @content;
+    }
+  }
 
-	.marquee {
-		position: relative;
-		overflow: hidden;
-		max-width: calc(100% - 4em);
-		margin: 0 auto;
+  // Base styles
+  .pad {
+    padding: 2vh 1em 1.5em;
+    height: 100%;
+    overflow-y: auto;
+    contain: style paint size layout;
+    width: 100%;
+  }
 
-		--max-width: calc(100% - 4em);
-		--offset: 10vw;
-		--move-initial: calc(-10vw + var(--offset));
-		--move-final: calc(calc(-100% + 80vw) + var(--offset));
-		--text-initial: calc(10vw);
-		--text-final: calc(var(--text-initial) * 100vw);
-	}
+  .marquee {
+    position: relative;
+    overflow: hidden;
+    max-width: calc(100% - 4em);
+    margin: 0 auto;
+    --max-width: calc(100% - 4em);
+    --offset: 10vw;
+    --move-initial: calc(-10vw + var(--offset));
+    --move-final: calc(calc(-100% + 80vw) + var(--offset));
+    --text-initial: calc(10vw);
+    --text-final: calc(var(--text-initial) * 100vw);
+  }
 
-	.marquee-wrapper {
-		width: fit-content;
-		display: flex;
-		position: relative;
-		transform: translate3d(var(--move-initial), 0, 0);
-		animation: marquee linear infinite forwards;
-		animation-delay: 2s;
-		animation-duration: 9s;
-	}
+  .marquee-wrapper {
+    width: fit-content;
+    display: flex;
+    position: relative;
+    transform: translate3d(var(--move-initial), 0, 0);
+    animation: marquee linear infinite forwards;
+    animation-delay: 2s;
+    animation-duration: 9s;
+  }
 
-	.marquee-text {
-		padding: 0 1em;
-		white-space: nowrap;
-	}
+  .marquee-text {
+    padding: 0 1em;
+    white-space: nowrap;
+  }
 
-	@keyframes marquee {
-		0% {
-			transform: translate3d(var(--move-initial), 0, 0);
-		}
+  @keyframes marquee {
+    0% {
+      transform: translate3d(var(--move-initial), 0, 0);
+    }
+    25% {
+      transform: translate3d(var(--move-initial), 0, 0);
+    }
+    75% {
+      transform: translate3d(var(--move-final), 0, 0);
+    }
+    100% {
+      transform: translate3d(var(--move-final), 0, 0);
+    }
+  }
 
-		25% {
-			transform: translate3d(var(--move-initial), 0, 0);
-		}
+  .controls {
+    gap: 1em;
+  }
 
-		75% {
-			transform: translate3d(var(--move-final), 0, 0);
-		}
+  .text-shadow {
+    text-shadow: 0.1em 0.1em 0.2em rgb(0 0 0 / 69.2%),
+                -0.1em -0.1em 0.2em rgb(0 0 0 / 41.8%);
+  }
 
-		100% {
-			transform: translate3d(var(--move-final), 0, 0);
-		}
-	}
+  .scroller {
+    overflow-y: auto;
+    transform: translate3d(0, 0, 0);
+    overflow-x: hidden;
+    backface-visibility: hidden;
+    contain: strict;
+    overscroll-behavior: contain;
+    height: inherit;
+    -webkit-overflow-scrolling: touch;
+    background: inherit;
+  }
 
-	.controls {
-		gap: 1em;
-	}
+  // Immersive mode
+  .immersive-wrapper {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    contain: strict;
+    overscroll-behavior: contain;
+    touch-action: none;
+    z-index: 151;
+    pointer-events: none;
+    isolation: isolate;
+    perspective: 1000px;
+    backface-visibility: hidden;
+    will-change: opacity, top, filter;
+    transform: scale(var(--scale)) translate3d(0, 0, 0);
+    transition: filter cubic-bezier(0.77, 0, 0.175, 1);
+    transition-property: background-color, transform, filter;
+    transition-duration: 400ms;
+    box-shadow: 0 0 100px -20px #000000d5 inset, 0 0 50rem 5px #000000c9;
+    filter: brightness(0.9) opacity(1) contrast(1) saturate(1.7) grayscale(0.35)
+            sepia(0.2) blur(var(--blur, 4px));
 
-	.text-shadow {
-		text-shadow: 0.1em 0.1em 0.2em rgb(0 0 0 / 69.2%),
-			-0.1em -0.1em 0.2em rgb(0 0 0 / 41.8%);
-	}
+    @include mobile {
+      position: absolute;
+      max-width: 100%;
+      left: 0;
+      top: 0;
+      background-size: 100vh !important;
+      background-attachment: scroll;
+      background-position: center;
+    }
+  }
 
-	.scroller {
-		overflow-y: auto;
-		transform: translate3d(0, 0, 0);
-		overflow-x: hidden;
-		backface-visibility: hidden;
-		contain: strict;
-		overscroll-behavior: contain;
-		height: inherit;
-		-webkit-overflow-scrolling: touch;
-		background: inherit;
-	}
+  .immersive {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    isolation: isolate;
+    touch-action: none;
+    pointer-events: none;
+    overscroll-behavior: contain;
+    contain: style;
+    perspective: 1000px;
+    backface-visibility: hidden;
+    overflow: hidden;
+    transform: scale(var(--scale)) translate3d(0, 0, 0);
+    transition: backdrop-filter cubic-bezier(0.77, 0, 0.175, 1);
+    transition-delay: 500ms;
+    transition-property: background-color transform backdrop-filter;
+    transition-duration: 1600ms;
+    background-color: hsl(0deg 0% 0%);
+    will-change: opacity, top, backdrop-filter;
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
 
-	.immersive-wrapper {
-		position: fixed;
-		inset: 0;
-		overflow: hidden;
-		contain: strict;
-		overscroll-behavior: contain;
-		touch-action: none;
-		z-index: 151;
-		pointer-events: none;
-		isolation: isolate;
-		contain: strict;
-		perspective: 1000px;
-		backface-visibility: hidden;
-		will-change: opacity, top, filter, filter;
-		transform: scale(var(--scale)) translate3d(0, 0, 0);
-		transition: filter cubic-bezier(0.77, 0, 0.175, 1);
-		transition-property: background-color, transform, filter, filter;
-		transition-duration: 400ms;
-		transition-delay: 0ms;
+    @include mobile {
+      position: fixed;
+      z-index: 151;
+      left: 0;
+      top: 0;
+      background-size: 50% 50% !important;
+    }
 
-		@media screen and (max-width: 720px) {
-			position: absolute;
-			max-width: 100%;
-			left: 0;
-			top: 0;
-			background-size: 100vh !important;
-			background-attachment: scroll;
-			background-position: center;
-		}
+    &.open {
+      background-color: hsl(0deg 0% 0% / 58.7%);
+    }
 
-		background-image: var(--background-image);
-		box-shadow: 0 0 100px -20px #000000d5 inset, 0 0 50rem 5px #000000c9;
-		filter: brightness(0.9) opacity(1) contrast(1) saturate(1.7) grayscale(0.35)
-			sepia(0.2) blur(var(--blur, 4px));
-	}
-	.immersive {
-		position: fixed;
-		inset: 0;
-		z-index: 1000;
-		isolation: isolate;
-		touch-action: none;
-		pointer-events: none;
-		overscroll-behavior: contain;
-		contain: style;
-		perspective: 1000px;
-		backface-visibility: hidden;
-		overflow: hidden;
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      touch-action: none;
+      overscroll-behavior: contain;
+    }
+  }
 
-		@media screen and (max-width: 720px) {
-			position: fixed;
-			z-index: 151;
-			left: 0;
-			top: 0;
-			background-size: 50% 50% !important;
-		}
+  // Layout components
+  .tracklist,
+  .pad {
+    position: absolute;
+    bottom: 0;
+    height: 100%;
+    min-height: 0;
+    background: var(--bottom-bg);
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+    z-index: 500;
+    border-top-left-radius: $sm-radius;
+    border-top-right-radius: $sm-radius;
+    contain: paint layout style;
 
-		transform: scale(var(--scale)) translate3d(0, 0, 0);
-		transition: backdrop-filter cubic-bezier(0.77, 0, 0.175, 1);
-		transition-delay: 500ms;
-		transition-property: background-color transform backdrop-filter
-			backdrop-filter;
-		transition-duration: 1600ms;
-		background-color: hsl(0deg 0% 0%);
+    @include desktop {
+      position: absolute;
+      left: 0;
+      width: calc(45vw);
+      max-height: 100%;
+      transition: transform cubic-bezier(0.25, 0.46, 0.45, 0.94) 400ms;
+      top: unset !important;
+      border-top-left-radius: unset;
+      border-top-right-radius: unset;
+    }
+  }
 
-		&.open {
-			background-color: hsl(0deg 0% 0% / 58.7%);
-			&::after {
-				// transition-delay: 100ms;
-				// transition-duration: 300ms;
-			}
-		}
+  .tracklist {
+    box-shadow: 0px 5px 32px -10px #000;
+  }
 
-		&::after {
-			content: "";
-			position: absolute;
-			inset: 0;
-			width: 100%;
-			height: 100%;
+  .fullscreen-player-popup {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    grid-area: m;
+    display: flex;
+    isolation: isolate;
+    touch-action: pan-y;
+    transform: translate3d(0, 100vh, 0);
+    will-change: transform, opacity;
+    overscroll-behavior: contain;
+    overflow: hidden;
+    contain: strict;
+    transition: transform 400ms cubic-bezier(0.895, 0.03, 0.685, 0.22);
 
-			z-index: 1;
-			touch-action: none;
-			overscroll-behavior: contain;
-			perspective: 1000px;
-			backface-visibility: hidden;
-		}
+    &::before {
+      position: absolute;
+      content: "";
+      inset: 0;
+      opacity: 0.2;
+      background: var(--base-bg);
+    }
 
-		will-change: opacity, top, backdrop-filter, backdrop-filter;
-		object-fit: cover;
-		height: 100%;
+    @include desktop {
+      flex-direction: row;
+    }
 
-		overscroll-behavior: contain;
-		width: 100%;
-		position: absolute;
-		backface-visibility: hidden;
-		inset: 0;
-		overflow: hidden;
-		will-change: filter, visibility;
-		touch-action: none;
-	}
+    &.open {
+      transform: translate3d(0, 0, 0);
+      transition: transform 400ms cubic-bezier(0.215, 0.61, 0.355, 1) 0ms;
+    }
+  }
 
-	.tracklist,
-	.pad {
-		position: absolute;
-		bottom: 0;
-		height: 100%;
-		min-height: 0;
-		background: var(--bottom-bg);
-		overscroll-behavior: contain;
-		touch-action: pan-y;
-		// content-visibility: auto;
-		z-index: 500;
-		border-top-left-radius: $sm-radius;
-		border-top-right-radius: $sm-radius;
-		contain: paint layout style;
+  // Album art and thumbnails
+  .album-art {
+    overscroll-behavior: contain;
+    height: 100%;
+    display: flex;
+    place-items: center;
+    margin-bottom: 1em;
+    width: 55vw;
+    justify-content: center;
+    max-width: 100%;
 
-		@media screen and (min-width: 720px) {
-			position: absolute;
-			left: 0;
-			width: calc(45vw);
-			max-height: 100%;
-			// transform: unset !important;
-			height: 100% !important;
-			// will-change: unset !important;
-			transition: transform cubic-bezier(0.25, 0.46, 0.45, 0.94) 400ms;
-			top: unset !important;
-			border-top-left-radius: unset !important;
-			border-top-right-radius: unset !important;
-		}
-	}
+    @include mobile {
+      margin-bottom: 0.25em;
+      height: unset;
+    }
+  }
 
-	.tracklist {
-		box-shadow: 0px 5px 32px -10px #000;
-	}
-	.fullscreen-player-popup {
-		position: absolute;
-		top: 0;
-		height: 100%;
-		width: 100%;
-		z-index: 1;
-		grid-area: m;
+  .img-container {
+    display: grid;
+    place-items: center;
+    min-height: 0;
+    position: relative;
+    max-width: 100%;
+    height: 100%;
+    overscroll-behavior: contain;
+    max-height: 35vh;
 
-		&::before {
-			position: absolute;
-			content: "";
-			inset: 0;
-			opacity: 0.2;
-			background: var(--base-bg);
-		}
+    @include mobile {
+      max-height: 28vh;
+      margin-bottom: 12vh;
+    }
 
-		display: flex;
-		isolation: isolate;
-		touch-action: pan-y;
-		transform: translate3d(0, 100vh, 0);
-		will-change: transform, opacity;
-		overscroll-behavior: contain;
-		overflow: hidden;
-		contain: strict;
-		transition: transform 400ms cubic-bezier(0.895, 0.03, 0.685, 0.22);
-		@media screen and (min-width: 720px) {
-			// gap: 1em;
-			flex-direction: row;
-		}
-		&.open {
-			transform: translate3d(0, 0, 0);
-			transition: transform 400ms cubic-bezier(0.215, 0.61, 0.355, 1) 0ms;
-		}
-	}
+    @media screen and (min-width: 1800px) {
+      max-height: 45vh;
+    }
+  }
 
-	hr {
-		margin-bottom: 1rem;
-		&.horizontal::before {
-			position: absolute;
-			inset: 0;
-			content: "";
-			margin: auto;
-			width: 25%;
-			color: hsl(0deg 0% 80%);
-			background: rgb(206 206 206 / 30.8%);
-			height: 0.45em;
-			border-radius: 3.6667em;
-			line-height: inherit;
-			z-index: 5;
-		}
+  .thumbnail {
+    position: relative;
+    overscroll-behavior: contain;
+    height: 100%;
+    min-height: 20vh;
+    max-height: inherit;
 
-		&.vertical::before {
-			position: absolute;
-			inset: 0;
-			opacity: 0;
-			transition: cubic-bezier(0.25, 0.46, 0.45, 0.94) 200ms opacity;
-			content: "";
-			margin: auto;
-			height: 15%;
-			color: hsl(0deg 0% 80%);
-			background: rgb(206 206 206 / 30.8%);
-			width: 0.45em;
-			line-height: inherit;
-			border-radius: 3.6667em;
-			z-index: 100;
-			transition-delay: 400ms;
-		}
+    video,
+    img {
+      touch-action: none;
+      max-width: inherit;
+      max-height: inherit;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      overscroll-behavior: contain;
+      border-radius: 4px;
 
-		&.vertical:hover::before {
-			opacity: 1;
-			transition: cubic-bezier(0.25, 0.46, 0.45, 0.94) 200ms opacity;
-		}
+      &:not(video) {
+        filter: drop-shadow(0 0 12px rgb(0 0 0 / 66%));
+      }
+      &:not(img) {
+        background: var(--poster-url);
+      }
+    }
+  }
 
-		overscroll-behavior: contain;
-		width: 100%;
-		border: none;
-		position: relative;
+  // UI Controls
+  .menu-mobile {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 1em;
+    z-index: 155;
+    max-width: 3em;
+    max-height: 3em;
+  }
 
-		&.vertical {
-			height: 100%;
-		}
-	}
+  .backdrop {
+    overscroll-behavior: contain;
+    grid-area: m;
+    position: fixed;
+    isolation: isolate;
+    display: grid;
+    pointer-events: all;
+    background-color: #0000;
+    inset: 0;
+    z-index: 151;
+    margin-top: var(--top-bar-height);
+    height: calc(100% - calc(var(--top-bar-height) + var(--player-bar-height)));
+    max-height: 100vh;
+    contain: strict;
+    touch-action: pan-y;
+    will-change: transform, opacity;
+    opacity: 0;
+    transition: 800ms opacity cubic-bezier(0.25, 0.46, 0.45, 0.94) 800ms;
 
-	.mobile {
-		min-height: 100% !important;
-		margin-top: unset !important;
-	}
+    &.mobile {
+      min-height: 100% !important;
+      margin-top: unset !important;
+    }
 
-	@keyframes fade-in {
-		0% {
-			background-color: #0000;
-		}
+    &.open {
+      transition: 400ms opacity cubic-bezier(0.25, 0.46, 0.45, 0.94) 0ms;
+      opacity: 1;
+    }
+  }
 
-		100% {
-			background-color: hsl(0deg 0% 0% / 58.7%);
-		}
-	}
+  // Handle styles
+  .handle {
+    overscroll-behavior: contain;
+    z-index: 1;
+    display: grid;
+    cursor: pointer;
+    padding: 0.12em;
+    align-items: center;
+    touch-action: none;
 
-	.kind-selector {
-		display: flex;
-		max-width: 100%;
-		justify-content: center;
-		min-height: 2rem;
-		margin-top: 2rem;
-		width: 100%;
-		@media screen and (min-width: 720px) {
-			width: 53vw;
-		}
-	}
+    &.horizontal {
+      width: 100%;
+      border-top-left-radius: $sm-radius;
+      border-top-right-radius: $sm-radius;
+      height: 4.5em;
+      padding-bottom: 0.0606em;
+      padding-block: 0.7em;
+      align-content: center;
+      top: 0;
+      left: 0;
 
-	.player-kind-wrapper {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		position: relative;
-		isolation: isolate;
-		max-width: 50%;
-		// width: 100%;
-		&::before {
-			content: "";
-			position: absolute;
-			inset: 0;
-			// background-color: var(--secondary-font-color);
-			width: 1px;
+      @include desktop {
+        display: none !important;
+        visibility: hidden !important;
+      }
+    }
 
-			z-index: -11;
-			left: 50%;
-		}
-		margin-bottom: 1.5rem;
-		> button {
-			all: unset;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			border: none;
-			padding: 0.8rem 0.5rem calc(0.8rem - 2px) 0.5rem;
+    &.vertical {
+      @include mobile {
+        display: none;
+        visibility: hidden;
+      }
 
-			line-height: 1;
-			background-color: hsla(240, 20%, 6%, 0.493) !important;
-			color: hsla(0, 0%, 100%, 0.8) !important;
-			text-align: center;
-			border: hsla(0, 0%, 50%, 0.7) 1px solid;
-			font-weight: 600;
-			font-size: 1.15rem;
-			cursor: pointer;
-			transition: background-color 200ms ease-in-out;
-			&:last-of-type {
-				padding: 0.8rem 1.25rem calc(0.8rem - 2px) 1.25rem;
-				border-top-right-radius: 16px;
-				border-bottom-right-radius: 16px;
-			}
-			&:first-of-type {
-				padding: 0.8rem 1.25rem calc(0.8rem - 2px) 1.25rem;
-				border-top-left-radius: 16px;
-				border-bottom-left-radius: 16px;
-			}
-			&.active,
-			&:hover {
-				background-color: hsla(219, 7%, 40%, 0.733) !important;
-				border-color: hsla(0, 0%, 60%, 0.8) !important;
-			}
+      left: 0;
+      position: absolute;
+      transition: transform cubic-bezier(0.25, 0.46, 0.45, 0.94) 400ms;
 
-			@media screen and (min-width: 720px) {
-				font-size: 1rem;
-			}
-		}
-	}
+      @include desktop {
+        width: 2.5em;
+        height: 100%;
+        padding-right: 0.0606em;
+        place-items: center;
+      }
+    }
+  }
 
-	.menu-mobile {
-		position: absolute;
-		top: 0;
-		right: 0;
-		margin: 1em;
-		z-index: 155;
-		max-width: 3em;
-		max-height: 3em;
-	}
+  hr {
+    margin-bottom: 1rem;
+    width: 100%;
+    border: none;
+    position: relative;
 
-	.backdrop {
-		overscroll-behavior: contain;
-		grid-area: m;
-		position: fixed;
-		isolation: isolate;
-		display: grid;
-		pointer-events: all;
-		background-color: #0000;
-		inset: 0;
-		z-index: 151;
-		margin-top: var(--top-bar-height);
-		height: calc(100% - calc(var(--top-bar-height) + var(--player-bar-height)));
-		max-height: 100vh;
-		contain: strict;
-		touch-action: pan-y;
-		will-change: transform, opacity;
-		opacity: 0;
-		transition: 800ms opacity cubic-bezier(0.25, 0.46, 0.45, 0.94) 800ms;
-		&.open {
-			transition: 400ms opacity cubic-bezier(0.25, 0.46, 0.45, 0.94) 0ms;
+    &.horizontal::before {
+      position: absolute;
+      inset: 0;
+      content: "";
+      margin: auto;
+      width: 25%;
+      color: hsl(0deg 0% 80%);
+      background: rgb(206 206 206 / 30.8%);
+      height: 0.45em;
+      border-radius: 3.6667em;
+      line-height: inherit;
+      z-index: 5;
+    }
 
-			opacity: 1;
-		}
-	}
+    &.vertical {
+      height: 100%;
 
-	.album-art {
-		overscroll-behavior: contain;
-		height: 100%;
-		display: flex;
-		place-items: center;
-		margin-bottom: 1em;
-		width: 55vw;
-		justify-content: center;
-		max-width: 100%;
+      &::before {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        transition: cubic-bezier(0.25, 0.46, 0.45, 0.94) 200ms opacity;
+        content: "";
+        margin: auto;
+        height: 15%;
+        color: hsl(0deg 0% 80%);
+        background: rgb(206 206 206 / 30.8%);
+        width: 0.45em;
+        line-height: inherit;
+        border-radius: 3.6667em;
+        z-index: 100;
+        transition-delay: 400ms;
+      }
 
-		@media screen and (max-width: 719px) {
-			margin-bottom: 0.25em;
-			height: unset;
-		}
-	}
-
-	.img-container {
-		display: grid;
-		place-items: center;
-		min-height: 0;
-		position: relative;
-		max-width: 100%;
-		height: 100%;
-		overscroll-behavior: contain;
-		max-height: 35vh;
-
-		@media screen and (max-width: 719px) {
-			max-height: 28vh;
-			margin-bottom: 12vh;
-		}
-
-		@media screen and (min-width: 1800px) {
-			max-height: 45vh;
-		}
-	}
-
-	.thumbnail {
-		position: relative;
-		overscroll-behavior: contain;
-		height: 100%;
-		min-height: 20vh;
-		max-height: inherit;
-		height: 100%;
-		video,
-		img {
-			touch-action: none;
-			max-width: inherit;
-			max-height: inherit;
-			width: 100%;
-			height: 100%;
-			object-fit: contain;
-			overscroll-behavior: contain;
-			border-radius: 4px;
-			&:not(video) {
-				filter: drop-shadow(0 0 12px rgb(0 0 0 / 66%));
-			}
-			&:not(img) {
-				background: var(--poster-url);
-			}
-		}
-	}
-
-	button {
-		position: absolute;
-		top: 0;
-		right: 0;
-		z-index: 100;
-	}
-
-	.horizontal {
-		width: 100%;
-		border-top-left-radius: $sm-radius;
-		border-top-right-radius: $sm-radius;
-		height: 4.5em;
-		padding-bottom: 0.0606em;
-		padding-block: 0.7em;
-		align-content: center;
-		top: 0;
-		left: 0;
-
-		@media screen and (min-width: 720px) {
-			display: none !important;
-			visibility: none !important;
-		}
-	}
-
-	.handle {
-		overscroll-behavior: contain;
-		z-index: 1;
-		display: grid;
-		cursor: pointer;
-		padding: 0.12em;
-		align-items: center;
-		touch-action: none;
-	}
-
-	.handle.vertical {
-		@media screen and (max-width: 719px) and (hover: hover) {
-			display: none;
-			visibility: none;
-		}
-
-		left: 0;
-		position: absolute;
-		transition: transform cubic-bezier(0.25, 0.46, 0.45, 0.94) 400ms;
-
-		@media screen and (min-width: 720px) and (hover: hover) {
-			width: 2.5em;
-			height: 100%;
-			padding-right: 0.0606em;
-			place-items: center;
-		}
-	}
+      &:hover::before {
+        opacity: 1;
+        transition: cubic-bezier(0.25, 0.46, 0.45, 0.94) 200ms opacity;
+      }
+    }
+  }
 </style>
