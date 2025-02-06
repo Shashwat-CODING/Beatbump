@@ -382,7 +382,7 @@
 				style="width: {!$isMobileMQ ? (queueOpen ? 55 : 95) : '100'}vw;"
 			>
 				<div class="img-container">
-					<div
+					<!-- <div
 						class="kind-selector"
 						style={!$isMobileMQ
 							? `transform: translate3d(${
@@ -402,8 +402,8 @@
 									$mode = "audio";
 								}}>Audio</button
 							>
-						</div>
-					</div>
+						</div> 
+					</div> -->
 					{#if loading}
 						<Loading size="3em" />
 					{/if}
