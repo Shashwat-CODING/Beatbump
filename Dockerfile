@@ -54,7 +54,7 @@ COPY --from=frontend-builder /app/build /app/build
 # But we can document in the Dockerfile what ports
 # the application is going to listen on by default.
 # https://docs.docker.com/engine/reference/builder/#expose
-EXPOSE 8080
+EXPOSE 8000
 
 # Run
 CMD ["/app/beat-server"]
