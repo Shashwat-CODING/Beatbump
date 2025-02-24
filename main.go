@@ -41,5 +41,5 @@ func main() {
 	e.GET("/api/v1/deviceOauth", auth.DeviceOauth)
 	e.GET("/api/v1/deviceOauth/:deviceCode", auth.AuthorizeOauth)
 
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":8000"))
 }
